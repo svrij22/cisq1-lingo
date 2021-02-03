@@ -24,4 +24,3 @@ jobs:
     - name: Run tests and build with Maven
       run: |
         mvnw test
-        mvn -B package --file pom.xml
