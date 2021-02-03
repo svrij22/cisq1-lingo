@@ -15,6 +15,7 @@ jobs:
     steps:
     - name: Run docker compose
       run: |
+        dir
         docker-compose up --build -V
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
