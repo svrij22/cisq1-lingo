@@ -13,10 +13,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Run docker compose
-      run: |
-        dir
-        docker-compose up --build -V
+    - uses: actions/checkout@v2
+    - name: Build the stack
+      run: docker-compose up --build -V -d
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
