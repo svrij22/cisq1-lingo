@@ -1,14 +1,8 @@
 package nl.hu.cisq1.lingo.words.domain;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity(name = "guess")
 public class Guess implements Serializable {
@@ -20,8 +14,8 @@ public class Guess implements Serializable {
     String word;
     String guess;
 
-    @ElementCollection
-    Map<Character, List> resultMap;
+    @Lob
+    ArrayList<List<?>> result;
 
     public enum letterStatus{
         CORRECT,
@@ -33,15 +27,20 @@ public class Guess implements Serializable {
     }
 
     public Guess(String word, String guess) {
-        resultMap = new LinkedHashMap<>();
+        result = new ArrayList<>();
+
         for (int i = 0; i < word.length(); i++){
+            /*Set status*/
             letterStatus status = letterStatus.INCORRECT;
+            if (word.indexOf(guess.charAt(i)) > 0) status = letterStatus.NEAR;
             if (word.charAt(i) == guess.charAt(i)) status = letterStatus.CORRECT;
-            resultMap.put(guess.charAt(i), status);
+
+            /*Add to result*/
+            result.add(Arrays.asList(guess.charAt(i), status));
         }
     }
 
-    public Map<Character, letterStatus> getResultMap() {
-        return resultMap;
+    public ArrayList<List<?>> getResultMap() {
+        return result;
     }
 }
