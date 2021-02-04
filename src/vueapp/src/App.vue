@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
+    <h2>Lingo</h2>
     <lingo-comp/>
   </div>
 </template>
