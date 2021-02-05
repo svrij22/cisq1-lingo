@@ -1,6 +1,5 @@
 package nl.hu.cisq1.lingo.words.domain;
 
-import nl.hu.cisq1.lingo.words.domain.Logic.gameState;
 import nl.hu.cisq1.lingo.words.domain.exception.GameResetException;
 import nl.hu.cisq1.lingo.words.domain.exception.WordAlreadyGuessed;
 import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
@@ -10,7 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nl.hu.cisq1.lingo.words.domain.Logic.gameState.*;
+import static nl.hu.cisq1.lingo.words.domain.Game.gameState.*;
+
 
 @Entity(name = "games")
 public class Game implements Serializable {
@@ -24,6 +24,13 @@ public class Game implements Serializable {
 
     @ManyToOne(cascade=CascadeType.ALL)
     private Word word;
+
+
+    public enum gameState{
+        WON,
+        STARTED,
+        GAMEOVER
+    }
 
     private gameState state = STARTED;
 
@@ -51,7 +58,7 @@ public class Game implements Serializable {
         guesses.add(new Guess(word.getValue(), guess));
 
         /*Check logic*/
-        Logic.checkLogic(this);
+        checkState();
     }
 
     public boolean isCorrect(){
@@ -61,25 +68,31 @@ public class Game implements Serializable {
         return guesses.get(guesses.size() - 1).isCorrect();
     }
 
-    public Integer getId() {
-        return id;
+    public void checkState(){
+        if (this.attempts.equals(this.attemptsAllowed)){
+            this.state = GAMEOVER;
+        }
+
+        if (this.isCorrect()){
+            this.state = WON;
+        }
     }
 
-    public void resetGame(Word word){
+    public void resetGame(Word word) {
         try{
-            if (this.state == STARTED) throw new Exception("Game is still running");
+            if (state == STARTED) throw new Exception("Game is still running");
 
-            if (this.state == WON){
-                this.score += 100 - (this.guesses.size() * 10);
+            if (state == WON){
+                this.addScore(100 - (guesses.size() * 10));
             }
 
-            if (this.state == GAMEOVER){
-                this.score = Math.ceil(this.score / 2);
+            if (state == GAMEOVER){
+                this.removeScore();
             }
 
             guesses = new ArrayList<>();
             this.word = word;
-            this.state = STARTED;
+            state = STARTED;
             attempts = 0;
 
         }catch (Exception e){
@@ -87,32 +100,13 @@ public class Game implements Serializable {
         }
     }
 
+
+    public Integer getId() {
+        return id;
+    }
+
     public void addScore(int score){
         this.score += score;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
-    public Integer getAttemptsAllowed() {
-        return attemptsAllowed;
-    }
-
-    public Integer getAttempts() {
-        return attempts;
-    }
-
-    public gameState getState() {
-        return state;
-    }
-
-    public void setState(gameState state) {
-        this.state = state;
     }
 
     public void setWord(Word word) {
@@ -130,4 +124,9 @@ public class Game implements Serializable {
     public List<Guess> getGuesses() {
         return guesses;
     }
+
+    public void removeScore() {
+        this.score = Math.ceil(this.score / 2);
+    }
+
 }

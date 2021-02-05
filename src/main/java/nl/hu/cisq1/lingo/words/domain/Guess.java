@@ -1,9 +1,15 @@
 package nl.hu.cisq1.lingo.words.domain;
 
-import javax.persistence.*;
+import nl.hu.cisq1.lingo.words.domain.Guess.letterStatus;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+
+import static nl.hu.cisq1.lingo.words.domain.Guess.letterStatus.*;
 
 @Entity(name = "guess")
 public class Guess implements Serializable {
@@ -16,7 +22,7 @@ public class Guess implements Serializable {
     String guess;
 
     @Lob
-    ArrayList<List<?>> result;
+    ArrayList<LingoLetter> lingoLetters;
 
     public enum letterStatus{
         CORRECT,
@@ -25,56 +31,65 @@ public class Guess implements Serializable {
     }
 
     public boolean isCorrect(){
-        return this.result
-                .stream()
-                .allMatch(n -> n.get(1) == letterStatus.CORRECT);
+        return this.lingoLetters.stream().allMatch(n -> n.getStatus() == CORRECT);
     }
 
     public Guess() {
     }
 
     public Guess(String word, String guess) {
+        this.lingoLetters = matchLingoLetterGuess(word, guess);
+    }
 
-        result = new ArrayList<>();
+    public ArrayList<LingoLetter> getLingoLetters() {
+        return lingoLetters;
+    }
+
+    public void setLingoLetters(ArrayList<LingoLetter> lingoLetters) {
+        this.lingoLetters = lingoLetters;
+    }
+
+
+    public ArrayList<LingoLetter> matchLingoLetterGuess(String word, String guess){
+
+        ArrayList<LingoLetter> result = new ArrayList<>();
         StringBuilder nonGuessedLetters = new StringBuilder();
 
         /*Get correctly guessed words*/
         for (int i = 0; i < word.length(); i++){
 
             /*Set status*/
-            letterStatus status = letterStatus.INCORRECT;
+            Guess.letterStatus status = INCORRECT;
             if (word.charAt(i) == guess.charAt(i)) {
-                status = letterStatus.CORRECT;
+                status = CORRECT;
             }else{
                 nonGuessedLetters.append(word.charAt(i));
             }
 
             /*Add to result*/
-            result.add(Arrays.asList(guess.charAt(i), status));
+            result.add(new LingoLetter(guess.charAt(i), status));
         }
 
-        String nonGuessedLettersStr = nonGuessedLetters.toString();
-
         /*Get orange letters that are in the non guessed letters*/
-        result = result
-                .stream()
-                .map((arr) -> {
-                    letterStatus status = (letterStatus) arr.get(1);
-                    String letter = arr.get(0).toString();
-                    if (status != letterStatus.CORRECT){
-                        if (nonGuessedLettersStr.contains(letter)) {
-                            nonGuessedLetters.setCharAt(nonGuessedLetters.indexOf(letter), ' ');
-                            System.out.println(nonGuessedLettersStr);
-                            status = letterStatus.NEAR;
-                        }
-                    }
-                    return Arrays.asList(arr.get(0), status);
-                })
-                .collect(Collectors.toCollection(ArrayList::new));
+        result.forEach((letter) -> {
 
-    }
+            /*Get character and status*/
+            Guess.letterStatus status = letter.getStatus();
+            String character = letter.getCharacter().toString();
 
-    public ArrayList<List<?>> getResultMap() {
+            /*Not correct?*/
+            if (status != CORRECT){
+
+                /*Is in non guessed letters? Remove char from non guessed letters and set status to near*/
+                if (nonGuessedLetters.toString().contains(character)) {
+                    nonGuessedLetters.setCharAt(nonGuessedLetters.indexOf(character), ' ');
+                    status = NEAR;
+                }
+            }
+
+            letter.setStatus(status);
+        });
+
         return result;
     }
 }

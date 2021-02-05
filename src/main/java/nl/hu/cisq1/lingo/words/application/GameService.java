@@ -3,7 +3,6 @@ package nl.hu.cisq1.lingo.words.application;
 
 import nl.hu.cisq1.lingo.words.data.GameRepository;
 import nl.hu.cisq1.lingo.words.domain.Game;
-import nl.hu.cisq1.lingo.words.domain.Logic;
 import nl.hu.cisq1.lingo.words.domain.Word;
 import nl.hu.cisq1.lingo.words.domain.exception.GameIdNotFound;
 import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
@@ -34,7 +33,7 @@ public class GameService {
         return getNewGame(word);
     }
 
-    public Game gameDoGuess(Integer id, String guess) throws Exception {
+    public Game gameDoGuess(Integer id, String guess) {
         Game game = gameRepository.findById(id).orElseThrow(GameIdNotFound::new);
         if (game.getWord().getValue().length() != guess.length()) throw new WordLengthNotEqual();
         game.doGuess(guess);

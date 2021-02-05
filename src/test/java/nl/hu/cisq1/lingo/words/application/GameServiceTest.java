@@ -34,6 +34,27 @@ class GameServiceTest {
     GameRepository mockRepositoryG;
 
     @ParameterizedTest
+    @DisplayName("Creates a new game from service and checks word")
+    @MethodSource("randomWordExamples")
+    void testGameService(Word word) throws Exception {
+
+        /*Mock repos*/
+        SpringWordRepository mockRepositoryW = mock(SpringWordRepository.class);
+        GameRepository mockRepositoryG2 = mock(GameRepository.class);
+        WordService service = new WordService(mockRepositoryW);
+        GameService gameService = new GameService(mockRepositoryG2, service);
+
+        /*Create game*/
+        Game expected = new Game(word);
+        Game game = gameService.getNewGame(word);
+
+        /*Asserts equal word value*/
+        assertEquals(game.getWord().getValue(), expected.getWord().getValue());
+        assertEquals(game.getWord().getValue(), word.getValue());
+    }
+
+
+    @ParameterizedTest
     @DisplayName("Creates a new game from service and guesses the right word")
     @MethodSource("randomWordExamples")
     void testGameServiceCorrect(Word word) throws Exception {
@@ -50,7 +71,7 @@ class GameServiceTest {
         Integer id = game.getId();
         gameService.gameDoGuess(id, word.getValue());
 
-        assertTrue(game.getGuesses().get(0).isCorrect());
+        assertTrue(game.isCorrect());
     }
 
     static Stream<Arguments> randomWordExamples() {

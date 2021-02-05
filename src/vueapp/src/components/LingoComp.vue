@@ -1,11 +1,11 @@
 <template>
     <div class="game-root">
-        <div class="score-box" :style="{'width': 35*(game.word.length) + 'px'}" >
+        <div class="score-box" :style="{'width': 35*(wordLength) + 'px'}" >
             <h2>Score</h2> <h2>{{this.game.score}}</h2>
         </div>
-        <div v-if="state" :style="{'width': 35*(game.word.length) + 'px'}" class="game-box">
+        <div v-if="state" :style="{'width': 35*(wordLength) + 'px'}" class="game-box">
             <div class="row-box" v-for="(row, indx) in game.guesses" :key="'row' + indx">
-                <div :class="'letter-box ' + letterStyling(row, x)" v-for="x in game.word.length" :key="x">{{guessLetter(row, x-1)}}</div>
+                <div :class="'letter-box ' + letterStyling(row, x-1)" v-for="x in game.word.length" :key="x">{{guessLetter(row, x-1)}}</div>
             </div>
             <div class="row-box" v-if="state == 'STARTED'">
                 <div class="letter-box" v-for="x in game.word.length" :key="x">{{inputLetter(x-1)}}</div>
@@ -36,6 +36,13 @@
         computed: {
             state() {
                 return this.game?.state;
+            },
+            wordLength(){
+                try{
+                    return this.game.word.length;
+                }catch (e) {
+                    return 0;
+                }
             }
         },
         methods: {
@@ -57,8 +64,8 @@
                 try{
                     let letter = '.';
                     _.each(this.game.guesses, guess => {
-                        let map = guess.resultMap[pos];
-                        if (map[1] === 'CORRECT') letter = map[0];
+                        let map = guess.lingoLetters[pos];
+                        if (map.status === 'CORRECT') letter = map.character;
                     })
                     return letter;
                 }catch (e) {
@@ -74,8 +81,8 @@
             },
             guessLetter(row, pos){
                 try{
-                    let resMap = row.resultMap[pos];
-                    return resMap[0];
+                    let resMap = row.lingoLetters[pos];
+                    return resMap.character;
                 }catch (e) {
                     console.log(e)
                 }
@@ -89,9 +96,9 @@
             },
             letterStyling(row, pos){
                 try{
-                    let resMap = row.resultMap[pos-1];
-                    if (resMap[1] === 'CORRECT') return 'correct-letter';
-                    if (resMap[1] === 'NEAR') return 'near-letter';
+                    let resMap = row.lingoLetters[pos];
+                    if (resMap.status === 'CORRECT') return 'correct-letter';
+                    if (resMap.status === 'NEAR') return 'near-letter';
                 }catch (e) {
                     console.log(e)
                 }
