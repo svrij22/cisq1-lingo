@@ -16,7 +16,7 @@ class GameTest {
     @ParameterizedTest
     @DisplayName("Creates a new game and guesses the right word")
     @MethodSource("randomWordExamples")
-    void testGameCorrect(Word word) {
+    void testGameCorrect(Word word) throws Exception {
 
         Game game = new Game(word);
         game.doGuess(word.getValue());
@@ -27,7 +27,7 @@ class GameTest {
     @ParameterizedTest
     @DisplayName("Creates a new game and guesses the wrong word")
     @MethodSource("randomWordExamples")
-    void testGameWrong(Word word) {
+    void testGameWrong(Word word) throws Exception {
 
         Game game = new Game(word);
         game.doGuess(word.getValue().replace('a', 'b'));
@@ -44,7 +44,9 @@ class GameTest {
             game.doGuess(word.getValue() + "xxx");
             assertFalse(game.getGuesses().get(0).isCorrect());
             fail( "My method didn't throw when I expected it to" );
-        } catch (WordLengthNotEqual ignored) {}
+        } catch (WordLengthNotEqual ignored) {} catch (Exception e) {
+            fail( "Failed on wrong exception" );
+        }
     }
 
     static Stream<Arguments> randomWordExamples() {

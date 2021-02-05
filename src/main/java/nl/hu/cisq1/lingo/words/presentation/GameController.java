@@ -23,13 +23,19 @@ public class GameController {
         return this.service.getNewGame();
     }
 
+
+    @GetMapping("reset")
+    public Game resetGame(@RequestParam Integer id) {
+        try {
+            return this.service.resetGame(id);
+        } catch (Exception ex) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage()); }
+    }
+
     @PostMapping("guess")
     public Game getRandomWord(@RequestParam Integer id,
                                 @RequestParam String guess) {
         try {
             return this.service.gameDoGuess(id, guess);
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
+        } catch (Exception ex) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage()); }
     }
 }

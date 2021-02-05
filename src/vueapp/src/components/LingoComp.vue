@@ -1,13 +1,16 @@
 <template>
     <div class="game-root">
-        <div v-if="gameRunning">
+        <div v-if="state">
             <div class="row-box" v-for="(row, indx) in game.guesses" :key="'row' + indx">
                 <div :class="'letter-box ' + letterStyling(row, x)" v-for="x in game.word.length" :key="x">{{guessLetter(row, x-1)}}</div>
             </div>
-            <div class="row-box">
+            <div class="row-box" v-if="state == 'STARTED'">
                 <div class="letter-box" v-for="x in game.word.length" :key="x">{{inputLetter(x-1)}}</div>
             </div>
-            <input v-model="inputStr" :style="{'width': 35*(game.word.length) + 'px'}" class="input"/>
+            <div :style="{'width': 35*(game.word.length) + 'px'}">
+                <input v-model="inputStr" :style="{'width': 35*(game.word.length) + 'px'}" class="input" v-if="state == 'STARTED'"/>
+                <button class="input" v-if="state != 'STARTED'" @click="resetGame"> Reset </button>
+            </div>
         </div>
         <div v-else>
             <button @click="newGame"> New Game </button>
@@ -23,19 +26,29 @@
         name: "LingoComp",
         data(){
             return {
-                gameRunning: false,
                 game: {},
                 inputStr: ''
+            }
+        },
+        computed: {
+            state() {
+                return this.game?.state;
             }
         },
         methods: {
             newGame(){
                 axios.get(`http://localhost:8070/game/new`)
                 .then(res => {
-                    this.gameRunning = true;
                     this.game = res.data;
                     this.inputStr = this.game.word.value[0];
                 })
+            },
+            resetGame(){
+                axios.get(`http://localhost:8070/game/reset?id=${this.game.id}`)
+                    .then(res => {
+                        this.game = res.data;
+                        this.inputStr = this.game.word.value[0];
+                    })
             },
             findCorrectLetter(pos){
                 try{
@@ -138,5 +151,6 @@
     .input{
         border: 2px solid gray;
         margin-top: 10px;
+        width: 100%;
     }
 </style>

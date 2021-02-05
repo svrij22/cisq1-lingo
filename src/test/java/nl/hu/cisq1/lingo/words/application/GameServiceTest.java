@@ -36,7 +36,7 @@ class GameServiceTest {
     @ParameterizedTest
     @DisplayName("Creates a new game from service and guesses the right word")
     @MethodSource("randomWordExamples")
-    void testGameServiceCorrect(Word word) {
+    void testGameServiceCorrect(Word word) throws Exception {
 
         /*Mock repos*/
         SpringWordRepository mockRepositoryW = mock(SpringWordRepository.class);

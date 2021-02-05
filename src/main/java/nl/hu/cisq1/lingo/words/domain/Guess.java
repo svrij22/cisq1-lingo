@@ -63,6 +63,8 @@ public class Guess implements Serializable {
                     String letter = arr.get(0).toString();
                     if (status != letterStatus.CORRECT){
                         if (nonGuessedLettersStr.contains(letter)) {
+                            nonGuessedLetters.setCharAt(nonGuessedLetters.indexOf(letter), ' ');
+                            System.out.println(nonGuessedLettersStr);
                             status = letterStatus.NEAR;
                         }
                     }

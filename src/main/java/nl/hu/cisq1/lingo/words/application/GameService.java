@@ -3,6 +3,7 @@ package nl.hu.cisq1.lingo.words.application;
 
 import nl.hu.cisq1.lingo.words.data.GameRepository;
 import nl.hu.cisq1.lingo.words.domain.Game;
+import nl.hu.cisq1.lingo.words.domain.Logic;
 import nl.hu.cisq1.lingo.words.domain.Word;
 import nl.hu.cisq1.lingo.words.domain.exception.GameIdNotFound;
 import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
@@ -41,7 +42,11 @@ public class GameService {
         return game;
     }
 
-    public void checkGame(){
-
+    public Game resetGame(Integer id) {
+        Game game = gameRepository.findById(id).orElseThrow(GameIdNotFound::new);
+        Word word = wordService.provideRandomWord();
+        game.resetGame(word);
+        gameRepository.save(game);
+        return game;
     }
 }
