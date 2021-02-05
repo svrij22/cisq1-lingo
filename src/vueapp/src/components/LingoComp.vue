@@ -1,14 +1,17 @@
 <template>
     <div class="game-root">
-        <div v-if="state">
+        <div class="score-box" :style="{'width': 35*(game.word.length) + 'px'}" >
+            <h2>Score</h2> <h2>{{this.game.score}}</h2>
+        </div>
+        <div v-if="state" :style="{'width': 35*(game.word.length) + 'px'}" class="game-box">
             <div class="row-box" v-for="(row, indx) in game.guesses" :key="'row' + indx">
                 <div :class="'letter-box ' + letterStyling(row, x)" v-for="x in game.word.length" :key="x">{{guessLetter(row, x-1)}}</div>
             </div>
             <div class="row-box" v-if="state == 'STARTED'">
                 <div class="letter-box" v-for="x in game.word.length" :key="x">{{inputLetter(x-1)}}</div>
             </div>
-            <div :style="{'width': 35*(game.word.length) + 'px'}">
-                <input v-model="inputStr" :style="{'width': 35*(game.word.length) + 'px'}" class="input" v-if="state == 'STARTED'"/>
+            <div>
+                <input v-model="inputStr" class="input" v-if="state == 'STARTED'"/>
                 <button class="input" v-if="state != 'STARTED'" @click="resetGame"> Reset </button>
             </div>
         </div>
@@ -120,8 +123,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
     }
     .row-box{
+        align-self: end;
         display: flex;
     }
 
@@ -152,5 +157,16 @@
         border: 2px solid gray;
         margin-top: 10px;
         width: 100%;
+    }
+
+    .game-box{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .score-box{
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
     }
 </style>
