@@ -1,6 +1,4 @@
-package nl.hu.cisq1.lingo.words.domain;
-
-import nl.hu.cisq1.lingo.words.domain.Guess.letterStatus;
+package nl.hu.cisq1.lingo.game.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +7,7 @@ import javax.persistence.Lob;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import static nl.hu.cisq1.lingo.words.domain.Guess.letterStatus.*;
+import static nl.hu.cisq1.lingo.game.domain.Guess.letterStatus.*;
 
 @Entity(name = "guess")
 public class Guess implements Serializable {

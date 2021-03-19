@@ -1,5 +1,6 @@
-package nl.hu.cisq1.lingo.words.domain;
+package nl.hu.cisq1.lingo.game.domain;
 
+import nl.hu.cisq1.lingo.words.domain.Word;
 import nl.hu.cisq1.lingo.words.domain.exception.GameResetException;
 import nl.hu.cisq1.lingo.words.domain.exception.WordAlreadyGuessed;
 import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
@@ -9,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nl.hu.cisq1.lingo.words.domain.Game.gameState.*;
+import static nl.hu.cisq1.lingo.game.domain.Game.gameState.*;
 
 
 @Entity(name = "games")
@@ -19,7 +20,6 @@ public class Game implements Serializable {
     @GeneratedValue
     private Integer id;
     private Double score = (double) 0;
-    final private Integer attemptsAllowed = 10;
     private Integer attempts = 0;
 
     @ManyToOne(cascade=CascadeType.ALL)
@@ -69,7 +69,9 @@ public class Game implements Serializable {
     }
 
     public void checkState(){
-        if (this.attempts.equals(this.attemptsAllowed)){
+        Integer attemptsAllowed = 10;
+
+        if (this.attempts.equals(attemptsAllowed)){
             this.state = GAMEOVER;
         }
 
@@ -78,7 +80,7 @@ public class Game implements Serializable {
         }
     }
 
-    public void resetGame(Word word) {
+    public void resetGame(Word newWord) {
         try{
             if (state == STARTED) throw new Exception("Game is still running");
 
@@ -90,10 +92,11 @@ public class Game implements Serializable {
                 this.removeScore();
             }
 
-            guesses = new ArrayList<>();
-            this.word = word;
-            state = STARTED;
-            attempts = 0;
+            /*Reset game values*/
+            this.guesses = new ArrayList<>();
+            this.word = newWord;
+            this.state = STARTED;
+            this.attempts = 0;
 
         }catch (Exception e){
             throw new GameResetException(e.getMessage());

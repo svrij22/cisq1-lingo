@@ -1,10 +1,8 @@
-package nl.hu.cisq1.lingo.words.presentation;
+package nl.hu.cisq1.lingo.game.presentation;
 
 
-import nl.hu.cisq1.lingo.words.application.GameService;
-import nl.hu.cisq1.lingo.words.application.WordService;
-import nl.hu.cisq1.lingo.words.domain.Game;
-import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotSupportedException;
+import nl.hu.cisq1.lingo.game.application.GameService;
+import nl.hu.cisq1.lingo.game.domain.Game;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;

@@ -1,8 +1,9 @@
-package nl.hu.cisq1.lingo.words.domain;
+package nl.hu.cisq1.lingo.game.domain;
 
+import nl.hu.cisq1.lingo.game.domain.Game;
+import nl.hu.cisq1.lingo.words.domain.Word;
 import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

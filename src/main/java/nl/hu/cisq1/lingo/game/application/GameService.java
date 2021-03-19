@@ -1,12 +1,12 @@
-package nl.hu.cisq1.lingo.words.application;
+package nl.hu.cisq1.lingo.game.application;
 
 
-import nl.hu.cisq1.lingo.words.data.GameRepository;
-import nl.hu.cisq1.lingo.words.domain.Game;
+import nl.hu.cisq1.lingo.words.application.WordService;
+import nl.hu.cisq1.lingo.game.data.GameRepository;
+import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.words.domain.Word;
 import nl.hu.cisq1.lingo.words.domain.exception.GameIdNotFound;
 import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

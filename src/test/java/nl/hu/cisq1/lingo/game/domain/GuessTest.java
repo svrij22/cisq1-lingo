@@ -1,5 +1,6 @@
-package nl.hu.cisq1.lingo.words.domain;
+package nl.hu.cisq1.lingo.game.domain;
 
+import nl.hu.cisq1.lingo.game.domain.Guess;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
