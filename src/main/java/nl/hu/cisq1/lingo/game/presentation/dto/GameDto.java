@@ -1,4 +1,4 @@
-package nl.hu.cisq1.lingo.game.presentation;
+package nl.hu.cisq1.lingo.game.presentation.dto;
 
 import nl.hu.cisq1.lingo.game.domain.Guess;
 import nl.hu.cisq1.lingo.game.domain.enums.GameState;

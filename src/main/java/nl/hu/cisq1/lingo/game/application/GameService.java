@@ -22,15 +22,15 @@ public class GameService {
         this.wordService = wordService;
     }
 
+    public Game getNewGame(){
+        Word word = wordService.provideRandomWord();
+        return getNewGame(word);
+    }
+
     public Game getNewGame(Word word) {
         Game game = new Game(word);
         gameRepository.save(game);
         return game;
-    }
-
-    public Game getNewGame(){
-        Word word = wordService.provideRandomWord();
-        return getNewGame(word);
     }
 
     public Game gameDoGuess(Integer id, String guess) {
@@ -41,8 +41,12 @@ public class GameService {
     }
 
     public Game resetGame(Integer id) throws Exception {
-        Game game = gameRepository.findById(id).orElseThrow(GameIdNotFound::new);
         Word word = wordService.provideRandomWord();
+        return resetGame(word, id);
+    }
+
+    public Game resetGame(Word word, Integer id) throws Exception {
+        Game game = gameRepository.findById(id).orElseThrow(GameIdNotFound::new);
         game.resetGame(word);
         gameRepository.save(game);
         return game;

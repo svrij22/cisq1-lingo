@@ -15,8 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -72,6 +71,28 @@ class GameServiceIntegrationTest {
         gameService.gameDoGuess(id, word.getValue());
 
         assertTrue(game.getCurrentRound().isCorrect());
+    }
+
+    @ParameterizedTest
+    @DisplayName("Creates a new game from service and tries resetting the game before guessing")
+    @MethodSource("randomWordExamples")
+    void testGameServiceTryResetGame_False(Word word) throws Exception {
+
+        /*Mock repos*/
+        SpringWordRepository mockRepositoryW = mock(SpringWordRepository.class);
+        WordService service = new WordService(mockRepositoryW);
+        GameService gameService = new GameService(mockRepositoryG, service);
+
+        /*Create game*/
+        Game game = gameService.getNewGame(word);
+
+        /*Do guess*/
+        try{
+            gameService.resetGame(word, game.getId());
+            fail("No Exception thrown");
+        }catch (Exception e){
+            assertTrue(e.getMessage().contains("Game is still running"));
+        }
     }
 
     static Stream<Arguments> randomWordExamples() {

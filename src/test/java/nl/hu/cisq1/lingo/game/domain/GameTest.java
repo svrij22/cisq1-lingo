@@ -50,6 +50,20 @@ class GameTest {
         }
     }
 
+    @ParameterizedTest
+    @DisplayName("Creates a new game and fails the round")
+    @MethodSource("randomWordExamples")
+    void testGameFailRound(Word word) {
+        try {
+            Game game = new Game(word);
+            game.doGuess(word.getValue() + "xxx");
+            assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
+            fail( "My method didn't throw when I expected it to" );
+        } catch (WordLengthNotEqual ignored) {} catch (Exception e) {
+            fail( "Failed on wrong exception" );
+        }
+    }
+
     static Stream<Arguments> randomWordExamples() {
         return Stream.of(
                 Arguments.of(new Word("tawer")),

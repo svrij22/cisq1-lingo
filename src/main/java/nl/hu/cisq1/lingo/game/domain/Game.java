@@ -43,8 +43,8 @@ public class Game implements Serializable {
     }
 
     public void checkState(){
-        if (getCurrentRound().isCorrect()) this.state = WON;
         if (getCurrentRound().isGameOver()) this.state = GAMEOVER;
+        if (getCurrentRound().isCorrect()) this.state = WON;
     }
 
     public void resetGame(Word newWord) throws Exception {
