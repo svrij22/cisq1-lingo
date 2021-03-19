@@ -51,6 +51,10 @@ public class Round {
         guesses.add(new Guess(wordToGuess.getValue(), guess));
     }
 
+    public Hint getHint(){
+        return new Hint(wordToGuess, guesses);
+    }
+
     public List<Guess> getGuesses() {
         return guesses;
     }
