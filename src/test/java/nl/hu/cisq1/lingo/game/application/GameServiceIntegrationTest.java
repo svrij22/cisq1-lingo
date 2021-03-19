@@ -49,8 +49,8 @@ class GameServiceIntegrationTest {
         Game game = gameService.getNewGame(word);
 
         /*Asserts equal word value*/
-        assertEquals(game.getWord().getValue(), expected.getWord().getValue());
-        assertEquals(game.getWord().getValue(), word.getValue());
+        assertEquals(game.getCurrentRound().getWordToGuess().getValue(), expected.getCurrentRound().getWordToGuess().getValue());
+        assertEquals(game.getCurrentRound().getWordToGuess().getValue(), word.getValue());
     }
 
 
@@ -71,7 +71,7 @@ class GameServiceIntegrationTest {
         Integer id = game.getId();
         gameService.gameDoGuess(id, word.getValue());
 
-        assertTrue(game.isCorrect());
+        assertTrue(game.getCurrentRound().isCorrect());
     }
 
     static Stream<Arguments> randomWordExamples() {

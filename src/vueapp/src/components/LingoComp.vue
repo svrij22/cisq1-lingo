@@ -1,16 +1,16 @@
 <template>
     <div class="game-root">
-        <div class="score-box" :style="{'width': 35*(wordLength) + 'px'}" >
+        <div class="score-box" :style="{'width': 35*(wordLength) + 'px', 'min-width': '100px'}" >
             <h2>Score</h2> <h2>{{this.game.score}}</h2>
         </div>
-        <div v-if="state" :style="{'width': 35*(wordLength) + 'px'}" class="game-box">
+        <div v-if="state" class="game-box">
             <div class="row-box" v-for="(row, indx) in game.guesses" :key="'row' + indx">
-                <div :class="'letter-box ' + letterStyling(row, x-1)" v-for="x in game.word.length" :key="x">{{guessLetter(row, x-1)}}</div>
+                <div :class="'letter-box ' + letterStyling(row, x-1)" v-for="x in game.wordToGuess.length" :key="x">{{guessLetter(row, x-1)}}</div>
             </div>
             <div class="row-box" v-if="state == 'STARTED'">
-                <div class="letter-box" v-for="x in game.word.length" :key="x">{{inputLetter(x-1)}}</div>
+                <div class="letter-box" v-for="x in game.wordToGuess.length" :key="x">{{inputLetter(x-1)}}</div>
             </div>
-            <div>
+            <div class="input-box">
                 <input v-model="inputStr" class="input" v-if="state == 'STARTED'"/>
                 <button class="input" v-if="state != 'STARTED'" @click="resetGame"> Reset </button>
             </div>
@@ -39,7 +39,7 @@
             },
             wordLength(){
                 try{
-                    return this.game.word.length;
+                    return this.game.wordToGuess.length;
                 }catch (e) {
                     return 0;
                 }
@@ -50,21 +50,21 @@
                 axios.get(`http://localhost:8070/game/new`)
                 .then(res => {
                     this.game = res.data;
-                    this.inputStr = this.game.word.value[0];
+                    this.inputStr = this.game.wordToGuess.value[0];
                 })
             },
             resetGame(){
                 axios.get(`http://localhost:8070/game/reset?id=${this.game.id}`)
                     .then(res => {
                         this.game = res.data;
-                        this.inputStr = this.game.word.value[0];
+                        this.inputStr = this.game.wordToGuess.value[0];
                     })
             },
             findCorrectLetter(pos){
                 try{
                     let letter = '.';
                     _.each(this.game.guesses, guess => {
-                        let map = guess.lingoLetters[pos];
+                        let map = guess.letters[pos];
                         if (map.status === 'CORRECT') letter = map.character;
                     })
                     return letter;
@@ -81,7 +81,7 @@
             },
             guessLetter(row, pos){
                 try{
-                    let resMap = row.lingoLetters[pos];
+                    let resMap = row.letters[pos];
                     return resMap.character;
                 }catch (e) {
                     console.log(e)
@@ -96,7 +96,7 @@
             },
             letterStyling(row, pos){
                 try{
-                    let resMap = row.lingoLetters[pos];
+                    let resMap = row.letters[pos];
                     if (resMap.status === 'CORRECT') return 'correct-letter';
                     if (resMap.status === 'NEAR') return 'near-letter';
                 }catch (e) {
@@ -107,14 +107,14 @@
         watch: {
             inputStr(){
                 try{
-                    if (this.inputStr === "") this.inputStr = this.game.word.value[0];
+                    if (this.inputStr === "") this.inputStr = this.game.wordToGuess.value[0];
 
-                    if (this.inputStr.length === this.game.word.length){
+                    if (this.inputStr.length === this.game.wordToGuess.length){
                         this.postGuess()
                     }
 
-                    if (this.inputStr.length > this.game.word.length){
-                        this.inputStr = this.inputStr.slice(0, this.game.word.length)
+                    if (this.inputStr.length > this.game.wordToGuess.length){
+                        this.inputStr = this.inputStr.slice(0, this.game.wordToGuess.length)
                     }
                     this.inputStr = this.inputStr.replace(/[0-9]/g, '');
                 }catch (e) {
@@ -131,7 +131,10 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
+        padding: 20px;
+        margin-top: 100px;
     }
+
     .row-box{
         align-self: end;
         display: flex;
@@ -169,6 +172,12 @@
     .game-box{
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .input-box{
+        width: 100%;
     }
 
     .score-box{

@@ -1,15 +1,17 @@
 package nl.hu.cisq1.lingo.game.domain;
 
+import nl.hu.cisq1.lingo.game.domain.enums.LetterState;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 public class LingoLetter implements Serializable {
+
+    private int id;
     private Character character;
-    private Guess.letterStatus status;
+    private LetterState status;
 
-    public LingoLetter() {
-    }
-
-    public LingoLetter(Character character, Guess.letterStatus status) {
+    public LingoLetter(Character character, LetterState status) {
         this.character = character;
         this.status = status;
     }
@@ -22,11 +24,11 @@ public class LingoLetter implements Serializable {
         this.character = character;
     }
 
-    public Guess.letterStatus getStatus() {
+    public LetterState getStatus() {
         return status;
     }
 
-    public void setStatus(Guess.letterStatus status) {
+    public void setStatus(LetterState status) {
         this.status = status;
     }
 }

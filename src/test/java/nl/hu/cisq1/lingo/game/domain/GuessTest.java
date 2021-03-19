@@ -1,6 +1,6 @@
 package nl.hu.cisq1.lingo.game.domain;
 
-import nl.hu.cisq1.lingo.game.domain.Guess;
+import nl.hu.cisq1.lingo.game.domain.enums.LetterState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ class GuessTest {
     @DisplayName("Creates a lingo letter array")
     void createsArray() {
         Guess guess = new Guess("woord", "wourd");
-        assertEquals(guess.lingoLetters.size(), 5);
+        assertEquals(guess.getLetters().size(), 5);
     }
 
     @Test
@@ -21,9 +21,9 @@ class GuessTest {
     void allMatch() {
         Guess guess = new Guess("woord", "woord");
 
-        boolean allMatch = guess.getLingoLetters()
+        boolean allMatch = guess.getLetters()
                 .stream()
-                .allMatch((l) -> l.getStatus() == Guess.letterStatus.CORRECT);
+                .allMatch((l) -> l.getStatus() == LetterState.CORRECT);
 
         assertTrue(allMatch);
     }
@@ -33,9 +33,9 @@ class GuessTest {
     void incorrectMatch() {
         Guess guess = new Guess("woord", "woozq");
 
-        long matches = guess.getLingoLetters()
+        long matches = guess.getLetters()
                 .stream()
-                .filter(l -> l.getStatus().equals(Guess.letterStatus.INCORRECT))
+                .filter(l -> l.getStatus().equals(LetterState.ABSENT))
                 .count();
 
         assertEquals(matches, 2);
@@ -46,9 +46,9 @@ class GuessTest {
     void nearMatch() {
         Guess guess = new Guess("woord", "worod");
 
-        long allMatch = guess.getLingoLetters()
+        long allMatch = guess.getLetters()
                 .stream()
-                .filter(l -> l.getStatus().equals(Guess.letterStatus.NEAR))
+                .filter(l -> l.getStatus().equals(LetterState.NEAR))
                 .count();
 
         assertEquals(allMatch, 2);

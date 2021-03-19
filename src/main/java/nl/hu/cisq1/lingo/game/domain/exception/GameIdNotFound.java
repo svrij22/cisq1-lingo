@@ -1,4 +1,4 @@
-package nl.hu.cisq1.lingo.words.domain.exception;
+package nl.hu.cisq1.lingo.game.domain.exception;
 
 public class GameIdNotFound extends RuntimeException {
     public GameIdNotFound() {

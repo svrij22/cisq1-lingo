@@ -22,7 +22,7 @@ class GameTest {
         Game game = new Game(word);
         game.doGuess(word.getValue());
 
-        assertTrue(game.getGuesses().get(0).isCorrect());
+        assertTrue(game.getCurrentRound().getGuesses().get(0).isCorrect());
     }
 
     @ParameterizedTest
@@ -33,7 +33,7 @@ class GameTest {
         Game game = new Game(word);
         game.doGuess(word.getValue().replace('a', 'b'));
 
-        assertFalse(game.getGuesses().get(0).isCorrect());
+        assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
     }
 
     @ParameterizedTest
@@ -43,7 +43,7 @@ class GameTest {
         try {
             Game game = new Game(word);
             game.doGuess(word.getValue() + "xxx");
-            assertFalse(game.getGuesses().get(0).isCorrect());
+            assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
             fail( "My method didn't throw when I expected it to" );
         } catch (WordLengthNotEqual ignored) {} catch (Exception e) {
             fail( "Failed on wrong exception" );

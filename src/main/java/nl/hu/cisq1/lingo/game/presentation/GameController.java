@@ -17,23 +17,32 @@ public class GameController {
     }
 
     @GetMapping("new")
-    public Game getNewGame() {
-        return this.service.getNewGame();
+    public GameDto getNewGame() {
+        return getGameDto(this.service.getNewGame());
     }
 
 
     @GetMapping("reset")
-    public Game resetGame(@RequestParam Integer id) {
+    public GameDto resetGame(@RequestParam Integer id) {
         try {
-            return this.service.resetGame(id);
+            return getGameDto(this.service.resetGame(id));
         } catch (Exception ex) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage()); }
     }
 
     @PostMapping("guess")
-    public Game getRandomWord(@RequestParam Integer id,
+    public GameDto getRandomWord(@RequestParam Integer id,
                                 @RequestParam String guess) {
         try {
-            return this.service.gameDoGuess(id, guess);
+            return getGameDto(this.service.gameDoGuess(id, guess));
         } catch (Exception ex) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage()); }
+    }
+
+    public GameDto getGameDto(Game game){
+        return new GameDto(
+                game.getId(),
+                game.getCurrentRound().getGuesses(),
+                game.getScore(),
+                game.getState(),
+                game.getCurrentRound().getWordToGuess());
     }
 }
