@@ -22,6 +22,8 @@ public class Hint {
                     Character curChar = wordToGuess.getValue().charAt(i);
                     /*Check if matches correctly anywhere*/
                     boolean matchesAny = guesses.stream().anyMatch(guess -> (guess.getLetters().get(i).getCharacter().equals(curChar)));
+                    /*First letter always visible*/
+                    if (i == 0) matchesAny = true;
                     /*Return either _ or correct char*/
                     return (matchesAny ? curChar : '_');
                 })

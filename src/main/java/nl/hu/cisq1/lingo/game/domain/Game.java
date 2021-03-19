@@ -58,6 +58,7 @@ public class Game implements Serializable {
     }
 
     public GameState getState() {
+        //TODO check Game, get State;
         return state;
     }
 

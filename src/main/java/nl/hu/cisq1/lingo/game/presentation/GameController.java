@@ -3,10 +3,14 @@ package nl.hu.cisq1.lingo.game.presentation;
 
 import nl.hu.cisq1.lingo.game.application.GameService;
 import nl.hu.cisq1.lingo.game.domain.Game;
+import nl.hu.cisq1.lingo.game.domain.Hint;
 import nl.hu.cisq1.lingo.game.presentation.dto.GameDto;
+import nl.hu.cisq1.lingo.words.domain.Word;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("game")
@@ -44,6 +48,6 @@ public class GameController {
                 game.getCurrentRound().getGuesses(),
                 game.getScore(),
                 game.getState(),
-                game.getCurrentRound().getWordToGuess());
+                new Word(game.getCurrentRound().getHint().hintStr()));
     }
 }
