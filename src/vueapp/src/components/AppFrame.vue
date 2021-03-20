@@ -16,7 +16,7 @@
             </md-toolbar>
 
             <md-list>
-                <md-list-item>
+                <md-list-item @click="$router.push('/game')">
                     <md-icon>move_to_inbox</md-icon>
                     <span class="md-list-item-text">Game</span>
                 </md-list-item>
@@ -26,25 +26,30 @@
                     <span class="md-list-item-text">Leaderboard</span>
                 </md-list-item>
 
-                <md-list-item>
+                <md-list-item @click="logOut">
                     <md-icon>error</md-icon>
                     <span class="md-list-item-text">Uitloggen</span>
                 </md-list-item>
             </md-list>
         </md-drawer>
 
-        <lingo-comp/>
+        <router-view/>
     </div>
 </template>
 
 <script>
-    import LingoComp from "./LingoComp";
+
     export default {
         name: "AppFrame",
-        components: {LingoComp},
         data: () => ({
             showNavigation: false
-        })
+        }),
+        methods: {
+            logOut(){
+                localStorage.removeItem("auth");
+                this.$router.push("/auth")
+            }
+        }
     }
 </script>
 

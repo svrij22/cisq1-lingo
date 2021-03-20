@@ -7,6 +7,8 @@ import nl.hu.cisq1.lingo.game.domain.Hint;
 import nl.hu.cisq1.lingo.game.presentation.dto.GameDto;
 import nl.hu.cisq1.lingo.words.domain.Word;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,24 +23,25 @@ public class GameController {
         this.service = service;
     }
 
-    @GetMapping("new")
-    public GameDto getNewGame() {
-        return getGameDto(this.service.getNewGame());
+    @GetMapping()
+    public GameDto getGame(Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        return getGameDto(this.service.getGameForUser(username));
     }
 
-
     @GetMapping("reset")
-    public GameDto resetGame(@RequestParam Integer id) {
+    public GameDto resetGame(Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
         try {
-            return getGameDto(this.service.resetGame(id));
+            return getGameDto(this.service.resetGame(username));
         } catch (Exception ex) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage()); }
     }
 
     @PostMapping("guess")
-    public GameDto getRandomWord(@RequestParam Integer id,
-                                @RequestParam String guess) {
+    public GameDto getRandomWord(Authentication authentication, @RequestParam String guess) {
+        String username = (String) authentication.getPrincipal();
         try {
-            return getGameDto(this.service.gameDoGuess(id, guess));
+            return getGameDto(this.service.gameDoGuess(username, guess));
         } catch (Exception ex) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage()); }
     }
 

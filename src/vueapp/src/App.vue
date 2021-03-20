@@ -11,6 +11,15 @@ export default {
   name: 'App',
   components: {
     AppFrame,
+  },
+  watch:{
+    $route (to){
+      if (to !== '/auth'){
+        if (localStorage.getItem("auth") == null){
+          this.$router.push("/auth")
+        }
+      }
+    }
   }
 }
 </script>

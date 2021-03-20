@@ -15,9 +15,6 @@
                 <button class="input" v-if="state != 'STARTED'" @click="resetGame"> Reset </button>
             </div>
         </div>
-        <div v-else>
-            <button @click="newGame"> New Game </button>
-        </div>
     </div>
 </template>
 
@@ -46,19 +43,27 @@
             }
         },
         methods: {
-            newGame(){
-                axios.get(`http://localhost:8070/game/new`)
+            getGame(){
+                axios.get(`http://localhost:8070/game`, {
+                    headers: {
+                        authorization: localStorage.getItem("auth")
+                    }
+                })
                 .then(res => {
                     this.game = res.data;
                     this.inputStr = this.game.wordToGuess.value[0];
                 })
             },
             resetGame(){
-                axios.get(`http://localhost:8070/game/reset?id=${this.game.id}`)
-                    .then(res => {
-                        this.game = res.data;
-                        this.inputStr = this.game.wordToGuess.value[0];
-                    })
+                axios.get(`http://localhost:8070/game/reset`, {
+                    headers: {
+                        authorization: localStorage.getItem("auth")
+                    }
+                })
+                .then(res => {
+                    this.game = res.data;
+                    this.inputStr = this.game.wordToGuess.value[0];
+                })
             },
             findCorrectLetter(pos){
                 try{
@@ -88,11 +93,15 @@
                 }
             },
             postGuess(){
-                axios.post(`http://localhost:8070/game/guess?id=${this.game.id}&guess=${this.inputStr}`)
-                    .then(res => {
-                        this.game = res.data;
-                        this.inputStr = '';
-                    })
+                axios.post(`http://localhost:8070/game/guess?guess=${this.inputStr}`,null,{
+                    headers: {
+                        authorization: localStorage.getItem("auth")
+                    }
+                })
+                .then(res => {
+                    this.game = res.data;
+                    this.inputStr = '';
+                })
             },
             letterStyling(row, pos){
                 try{
@@ -121,6 +130,9 @@
                     console.log(e.message)
                 }
             }
+        },
+        mounted() {
+            this.getGame();
         }
     }
 </script>

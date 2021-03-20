@@ -1,12 +1,13 @@
 package nl.hu.cisq1.lingo.game.application;
 
 
+import nl.hu.cisq1.lingo.security.application.UserService;
+import nl.hu.cisq1.lingo.security.data.User;
 import nl.hu.cisq1.lingo.words.application.WordService;
 import nl.hu.cisq1.lingo.game.data.GameRepository;
 import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.words.domain.Word;
 import nl.hu.cisq1.lingo.game.domain.exception.GameIdNotFound;
-import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,11 +16,23 @@ import javax.transaction.Transactional;
 @Transactional
 public class GameService {
     private final GameRepository gameRepository;
+    private final UserService userService;
     private final WordService wordService;
 
-    public GameService(GameRepository gameRepository, WordService wordService) {
+    public GameService(GameRepository gameRepository, UserService userService, WordService wordService) {
         this.gameRepository = gameRepository;
+        this.userService = userService;
         this.wordService = wordService;
+    }
+
+    public Game getGameForUser(String username){
+        User user = userService.loadUserByUsername(username);
+        Game game = user.getGame();
+        if (game == null){
+            game = getNewGame();
+            user.setGame(game);
+        }
+        return game;
     }
 
     public Game getNewGame(){
@@ -33,20 +46,20 @@ public class GameService {
         return game;
     }
 
-    public Game gameDoGuess(Integer id, String guess) {
-        Game game = gameRepository.findById(id).orElseThrow(GameIdNotFound::new);
+    public Game gameDoGuess(String username, String guess) {
+        Game game = getGameForUser(username);
         game.doGuess(guess);
         gameRepository.save(game);
         return game;
     }
 
-    public Game resetGame(Integer id) throws Exception {
+    public Game resetGame(String username) throws Exception {
         Word word = wordService.provideRandomWord();
-        return resetGame(word, id);
+        return resetGame(word, username);
     }
 
-    public Game resetGame(Word word, Integer id) throws Exception {
-        Game game = gameRepository.findById(id).orElseThrow(GameIdNotFound::new);
+    public Game resetGame(Word word, String username) throws Exception {
+        Game game = getGameForUser(username);
         game.resetGame(word);
         gameRepository.save(game);
         return game;
