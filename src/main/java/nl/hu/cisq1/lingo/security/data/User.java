@@ -1,5 +1,6 @@
 package nl.hu.cisq1.lingo.security.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import nl.hu.cisq1.lingo.game.domain.Game;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +31,8 @@ public class User implements UserDetails {
 
     @Column(nullable = false, unique = true)
     private String username;
+
+    @JsonIgnore
     private String password;
 
     @OneToOne

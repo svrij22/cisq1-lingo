@@ -2,13 +2,13 @@ package nl.hu.cisq1.lingo.security.application;
 
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
 import nl.hu.cisq1.lingo.security.data.User;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 
 /**
  *  Implements UserDetailsService in order to make it usable
@@ -41,5 +41,9 @@ public class UserService implements UserDetailsService {
     public User loadUserByUsername(String username) {
         return this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+    }
+
+    public Collection<User> getLeaderboard() {
+        return userRepository.getTop10UsersByScore();
     }
 }
