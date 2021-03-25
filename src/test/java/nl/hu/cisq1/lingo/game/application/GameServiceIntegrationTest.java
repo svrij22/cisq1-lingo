@@ -4,47 +4,47 @@ import nl.hu.cisq1.lingo.game.data.GameRepository;
 import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.security.application.UserService;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
+import nl.hu.cisq1.lingo.security.data.User;
 import nl.hu.cisq1.lingo.words.application.WordService;
 import nl.hu.cisq1.lingo.words.data.SpringWordRepository;
 import nl.hu.cisq1.lingo.words.domain.Word;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-/**
- * This is a unit test.
- *
- * It tests the behaviors of our system under test,
- * WordService, in complete isolation:
- * - its methods are called by the test framework instead of a controller
- * - the WordService calls a test double instead of an actual repository
- */
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 class GameServiceIntegrationTest {
 
-    @Autowired
-    GameRepository mockRepositoryG;
+    @Autowired GameRepository gameRepository;
+    @Autowired SpringWordRepository wordRepository;
+    @Autowired SpringUserRepository userRepository;
+
+    @BeforeEach
+    void setup(){
+        UserService userService = new UserService(userRepository, mock(PasswordEncoder.class));
+        userService.register("test", "test123");
+    }
 
     @ParameterizedTest
     @DisplayName("Creates a new game from service and checks word")
     @MethodSource("randomWordExamples")
-    void testGameService(Word word) throws Exception {
-
+    void testGameService(Word word) {
         /*Mock repos*/
-        SpringWordRepository mockRepositoryW = mock(SpringWordRepository.class);
-        GameRepository mockRepositoryG2 = mock(GameRepository.class);
-        WordService service = new WordService(mockRepositoryW);
-        UserService userService = mock(UserService.class);
-        GameService gameService = new GameService(mockRepositoryG2, userService, service);
+        GameService gameService = new GameService(gameRepository, mock(UserService.class), mock(WordService.class));
 
         /*Create game*/
         Game expected = new Game(word);
@@ -55,24 +55,26 @@ class GameServiceIntegrationTest {
         assertEquals(game.getCurrentRound().getWordToGuess().getValue(), word.getValue());
     }
 
-
     @ParameterizedTest
     @DisplayName("Creates a new game from service and guesses the right word")
     @MethodSource("randomWordExamples")
     void testGameServiceCorrect(Word word) throws Exception {
 
         /*Mock repos*/
-        SpringWordRepository mockRepositoryW = mock(SpringWordRepository.class);
-        WordService service = new WordService(mockRepositoryW);
-        UserService userService = mock(UserService.class);
-        GameService gameService = new GameService(mockRepositoryG, userService, service);
+        WordService wordService = new WordService(wordRepository);
+        UserService userService = new UserService(userRepository, mock(PasswordEncoder.class));
+        GameService gameService = new GameService(gameRepository, userService, wordService);
 
-        /*Create game*/
-        Game game = gameService.getNewGame(word);
+        //Save word
+        wordRepository.save(word);
+
+        /*Create user and game*/
+        User user = userService.loadUserByUsername("test");
+        Game game = gameService.getGameForUser("test");
 
         /*Do guess*/
         Integer id = game.getId();
-        //gameService.gameDoGuess(id, word.getValue());
+        gameService.gameDoGuess(user.getUsername(), word.getValue());
 
         assertTrue(game.getCurrentRound().isCorrect());
     }
@@ -83,17 +85,20 @@ class GameServiceIntegrationTest {
     void testGameServiceTryResetGame_False(Word word) throws Exception {
 
         /*Mock repos*/
-        SpringWordRepository mockRepositoryW = mock(SpringWordRepository.class);
-        WordService service = new WordService(mockRepositoryW);
-        UserService userService = mock(UserService.class);
-        GameService gameService = new GameService(mockRepositoryG, userService, service);
+        WordService wordService = new WordService(wordRepository);
+        UserService userService = new UserService(userRepository, mock(PasswordEncoder.class));
+        GameService gameService = new GameService(gameRepository, userService, wordService);
 
-        /*Create game*/
-        Game game = gameService.getNewGame(word);
+        //Save word
+        wordRepository.save(word);
+
+        /*Create user and game*/
+        User user = userService.loadUserByUsername("test");
+        Game game = gameService.getGameForUser("test");
 
         /*Do guess*/
         try{
-            //gameService.resetGame(word, game.getId());
+            gameService.resetGame(word, user.getUsername());
             fail("No Exception thrown");
         }catch (Exception e){
             assertTrue(e.getMessage().contains("Game is still running"));
