@@ -2,6 +2,7 @@ package nl.hu.cisq1.lingo.security.presentation.filter;
 
 
 import io.jsonwebtoken.*;
+import nl.hu.cisq1.lingo.security.data.UserProfile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -77,6 +78,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return null;
         }
 
-        return new UsernamePasswordAuthenticationToken(username, null, authorities);
+        return new UsernamePasswordAuthenticationToken(new UserProfile(username), null, authorities);
     }
 }

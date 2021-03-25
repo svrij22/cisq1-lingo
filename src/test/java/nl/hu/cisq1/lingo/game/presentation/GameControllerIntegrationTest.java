@@ -1,13 +1,11 @@
 package nl.hu.cisq1.lingo.game.presentation;
 
 import nl.hu.cisq1.lingo.CiTestConfiguration;
+import nl.hu.cisq1.lingo.SpringSecWebAuxTestConfig;
 import nl.hu.cisq1.lingo.game.application.GameService;
 import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.words.domain.Word;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -18,6 +16,8 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAut
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -33,9 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @Import(CiTestConfiguration.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
-@TestPropertySource(properties = {"security.basic.enabled=false", "management.security.enabled=false"})
-@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class })
 class GameControllerIntegrationTest {
 
     @Autowired
@@ -57,10 +56,11 @@ class GameControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "user1", password = "pwd123", roles = "USER")
     @DisplayName("Request a new game")
     void requestNewGame() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .get("/game/new");
+                .get("/game");
 
         mockMvc.perform(request)
                 .andDo(print())
