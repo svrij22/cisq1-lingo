@@ -75,11 +75,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        auth.inMemoryAuthentication()
-                .passwordEncoder(encoder)
-                .withUser("spring")
-                .password(encoder.encode("secret"))
-                .roles("USER");
     }
 
     @Bean

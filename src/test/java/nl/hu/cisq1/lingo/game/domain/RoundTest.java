@@ -47,6 +47,23 @@ class RoundTest {
         assertTrue(round.isCorrect());
     }
 
+    @ParameterizedTest
+    @DisplayName("Game over exception")
+    @MethodSource("randomWordExamples")
+    void testWinRoundException(Word word) {
+        Round round = new Round(word);
+
+        /*10 Times*/
+        IntStream.range(0, 10).forEach(i -> round.doGuess("xxxxx"));
+        assertFalse(round.isCorrect());
+        assertTrue(round.isGameOver());
+
+        try{
+            round.doGuess("xxxxx");
+            fail("No exception thrown");
+        }catch (Exception ignored){}
+    }
+
     static Stream<Arguments> randomWordExamples() {
         return Stream.of(
                 Arguments.of(new Word("tawer")),

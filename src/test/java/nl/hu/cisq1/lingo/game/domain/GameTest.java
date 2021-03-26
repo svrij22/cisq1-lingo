@@ -17,12 +17,28 @@ class GameTest {
     @ParameterizedTest
     @DisplayName("Creates a new game and guesses the right word")
     @MethodSource("randomWordExamples")
-    void testGameCorrect(Word word) throws Exception {
+    void testGameCorrect(Word word) {
 
         Game game = new Game(word);
         game.doGuess(word.getValue());
 
         assertTrue(game.getCurrentRound().getGuesses().get(0).isCorrect());
+    }
+
+    @ParameterizedTest
+    @DisplayName("Guesses word and resets game")
+    @MethodSource("randomWordExamples")
+    void testGameCorrectReset(Word word) {
+
+        Game game = new Game(word);
+        game.doGuess(word.getValue());
+        assertTrue(game.getCurrentRound().getGuesses().get(0).isCorrect());
+
+        try{
+            game.resetGame(word);
+        }catch (Exception e){
+            fail("Exception thrown");
+        }
     }
 
     @ParameterizedTest

@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import nl.hu.cisq1.lingo.security.application.UserService;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
+import nl.hu.cisq1.lingo.security.data.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,17 +18,14 @@ public class SecurityConfig {
 
     public static String getAuthToken(SpringUserRepository userRepository) {
         UserService userService = new UserService(userRepository, mock(PasswordEncoder.class));
-        try{
-            userService.loadUserByUsername("user4");
-        }catch (UsernameNotFoundException ex){
-            userService.register("user4", "test123");
-        }
-
+        User user = userService.loadUserByUsername("user4");
+        userRepository.delete(user);
+        userService.register("user4", "test123");
         return getToken();
     }
 
     public static String getToken(){
-        String username = "user2";
+        String username = "user4";
 
         String secret = "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6IjcyZDMyZTAzLTIxNzUtNGI3Mi1hOTQ5LWRjNzE0ZGE5OTM5YyIsImlhdCI6MTYxNjI0MjA2NiwiZXhwIjoxNjE2MjQ1NjY2fQ.kTXHnKPZDGYyNFpFnZrMA7Az1ScCwnM_5It1jRHEf0U\"";
 
