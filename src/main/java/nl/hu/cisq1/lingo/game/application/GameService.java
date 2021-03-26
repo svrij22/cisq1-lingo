@@ -1,13 +1,12 @@
 package nl.hu.cisq1.lingo.game.application;
 
 
-import nl.hu.cisq1.lingo.security.application.UserService;
+import nl.hu.cisq1.lingo.security.filter.UserService;
 import nl.hu.cisq1.lingo.security.data.User;
 import nl.hu.cisq1.lingo.words.application.WordService;
 import nl.hu.cisq1.lingo.game.data.GameRepository;
 import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.words.domain.Word;
-import nl.hu.cisq1.lingo.game.domain.exception.GameIdNotFound;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

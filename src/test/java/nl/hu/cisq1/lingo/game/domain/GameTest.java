@@ -1,6 +1,7 @@
 package nl.hu.cisq1.lingo.game.domain;
 
 import nl.hu.cisq1.lingo.game.domain.Game;
+import nl.hu.cisq1.lingo.game.domain.enums.GameState;
 import nl.hu.cisq1.lingo.words.domain.Word;
 import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotEqual;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +34,7 @@ class GameTest {
         Game game = new Game(word);
         game.doGuess(word.getValue());
         assertTrue(game.getCurrentRound().getGuesses().get(0).isCorrect());
+        assertEquals(game.getState(), GameState.WON);
 
         try{
             game.resetGame(word);
@@ -47,9 +49,13 @@ class GameTest {
     void testGameWrong(Word word) throws Exception {
 
         Game game = new Game(word);
-        game.doGuess(word.getValue().replace('a', 'b'));
+        assertEquals(game.getState(), GameState.STARTED);
 
-        assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
+        game.doGuess(word.getValue().replace('a', 'b'));
+        System.out.println(game.getState());
+
+        assertFalse(game.getCurrentRound().isCorrect());
+        assertEquals(game.getState(), GameState.STARTED);
     }
 
     @ParameterizedTest
@@ -60,6 +66,7 @@ class GameTest {
             Game game = new Game(word);
             game.doGuess(word.getValue() + "xxx");
             assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
+            assertEquals(game.getState(), GameState.STARTED);
             fail( "My method didn't throw when I expected it to" );
         } catch (WordLengthNotEqual ignored) {} catch (Exception e) {
             fail( "Failed on wrong exception" );
@@ -74,6 +81,7 @@ class GameTest {
             Game game = new Game(word);
             game.doGuess(word.getValue() + "xxx");
             assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
+            assertEquals(game.getState(), GameState.STARTED);
             fail( "My method didn't throw when I expected it to" );
         } catch (WordLengthNotEqual ignored) {} catch (Exception e) {
             fail( "Failed on wrong exception" );

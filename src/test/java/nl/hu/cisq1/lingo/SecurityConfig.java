@@ -3,10 +3,9 @@ package nl.hu.cisq1.lingo;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import nl.hu.cisq1.lingo.security.application.UserService;
+import nl.hu.cisq1.lingo.security.filter.UserService;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
 import nl.hu.cisq1.lingo.security.data.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;

@@ -1,12 +1,10 @@
 package nl.hu.cisq1.lingo.security.presentation;
 
-import nl.hu.cisq1.lingo.security.application.UserService;
-import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
+import nl.hu.cisq1.lingo.security.filter.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

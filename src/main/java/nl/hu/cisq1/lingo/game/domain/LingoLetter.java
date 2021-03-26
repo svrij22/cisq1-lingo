@@ -20,10 +20,6 @@ public class LingoLetter implements Serializable {
         return character;
     }
 
-    public void setCharacter(Character character) {
-        this.character = character;
-    }
-
     public LetterState getStatus() {
         return status;
     }

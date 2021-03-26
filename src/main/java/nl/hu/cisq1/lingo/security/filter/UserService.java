@@ -1,4 +1,4 @@
-package nl.hu.cisq1.lingo.security.application;
+package nl.hu.cisq1.lingo.security.filter;
 
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
 import nl.hu.cisq1.lingo.security.data.User;

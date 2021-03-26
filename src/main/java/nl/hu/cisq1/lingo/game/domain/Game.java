@@ -1,9 +1,9 @@
 package nl.hu.cisq1.lingo.game.domain;
 
 import nl.hu.cisq1.lingo.game.domain.enums.GameState;
+import nl.hu.cisq1.lingo.game.domain.exception.GameResetException;
 import nl.hu.cisq1.lingo.security.data.User;
 import nl.hu.cisq1.lingo.words.domain.Word;
-import nl.hu.cisq1.lingo.game.domain.exception.GameResetException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -37,8 +37,8 @@ public class Game implements Serializable {
         getCurrentRound().doGuess(guess);
     }
 
-    public void resetGame(Word newWord) throws Exception {
-        if (getState() == STARTED) throw new Exception("Game is still running");
+    public void resetGame(Word newWord) {
+        if (getState() == STARTED) throw new GameResetException("Game is still running");
         if (getState() == WON) this.addScore(100 - (getCurrentRound().getGuesses().size() * 10));
         if (getState() == GAMEOVER) this.removeScore();
 

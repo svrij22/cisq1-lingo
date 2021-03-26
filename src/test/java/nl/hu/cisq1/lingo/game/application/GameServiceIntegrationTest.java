@@ -2,7 +2,7 @@ package nl.hu.cisq1.lingo.game.application;
 
 import nl.hu.cisq1.lingo.game.data.GameRepository;
 import nl.hu.cisq1.lingo.game.domain.Game;
-import nl.hu.cisq1.lingo.security.application.UserService;
+import nl.hu.cisq1.lingo.security.filter.UserService;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
 import nl.hu.cisq1.lingo.security.data.User;
 import nl.hu.cisq1.lingo.words.application.WordService;

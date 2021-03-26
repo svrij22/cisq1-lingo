@@ -1,17 +1,11 @@
 package nl.hu.cisq1.lingo.security.presentation.controller;
 
-import nl.hu.cisq1.lingo.security.application.UserService;
+import nl.hu.cisq1.lingo.security.filter.UserService;
 import nl.hu.cisq1.lingo.security.presentation.dto.AuthDto;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/register")
