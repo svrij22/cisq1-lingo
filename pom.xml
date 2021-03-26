@@ -171,7 +171,8 @@
                     <excludes>
                         <exclude>**/LingoApplication.*</exclude>
                         <!--Excludes JWT-->
-                        <exclude>**/presentation/filter/**</exclude>
+                        <exclude>**/presentation/filter/JwtAuthorizationFilter*.**</exclude>
+                        <!--Excludes overridden methods-->
                         <exclude>**/UserProfile*.*</exclude>
                     </excludes>
                 </configuration>
@@ -192,7 +193,8 @@
                             <excludes>
                                 <exclude>**/LingoApplication.*</exclude>
                                 <!--Excludes JWT-->
-                                <exclude>**/presentation/filter/**</exclude>
+                                <exclude>**/presentation/filter/JwtAuthorizationFilter*.**</exclude>
+                                <!--Excludes overridden methods-->
                                 <exclude>**/UserProfile*.*</exclude>
                             </excludes>
                         </configuration>
