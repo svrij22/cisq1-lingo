@@ -1,8 +1,12 @@
 package nl.hu.cisq1.lingo.words.presentation;
 
 import nl.hu.cisq1.lingo.CiTestConfiguration;
+import nl.hu.cisq1.lingo.SecurityConfig;
+import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,18 +32,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @Import(CiTestConfiguration.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 class WordControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    SpringUserRepository userRepository;
+
+    String authToken;
+
+    @BeforeAll
+    public void setupUser() {
+        this.authToken = SecurityConfig.getAuthToken(userRepository);
+    }
+
     @Test
     @DisplayName("only supports 5, 6 and 7 letter words")
     void notSupportedWordLength() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
                 .get("/words/random")
-                .param("length", "8");
+                .param("length", "8")
+                .header("Authorization", authToken);
 
         mockMvc.perform(request)
                 .andExpect(status().isBadRequest());
@@ -51,7 +67,8 @@ class WordControllerIntegrationTest {
         for (int length = 5; length <= 7; length++) {
             RequestBuilder request = MockMvcRequestBuilders
                     .get("/words/random")
-                    .param("length", String.valueOf(length));
+                    .param("length", String.valueOf(length))
+                    .header("Authorization", authToken);
 
             mockMvc.perform(request)
                     .andExpect(status().isOk())

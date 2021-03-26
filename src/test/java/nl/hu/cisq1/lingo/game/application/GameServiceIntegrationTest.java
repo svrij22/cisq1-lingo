@@ -8,7 +8,6 @@ import nl.hu.cisq1.lingo.security.data.User;
 import nl.hu.cisq1.lingo.words.application.WordService;
 import nl.hu.cisq1.lingo.words.data.SpringWordRepository;
 import nl.hu.cisq1.lingo.words.domain.Word;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -36,7 +36,11 @@ class GameServiceIntegrationTest {
     @BeforeEach
     void setup(){
         UserService userService = new UserService(userRepository, mock(PasswordEncoder.class));
-        userService.register("test", "test123");
+        try{
+            userService.loadUserByUsername("test");
+        }catch (UsernameNotFoundException ex){
+            userService.register("test", "test123");
+        }
     }
 
     @ParameterizedTest

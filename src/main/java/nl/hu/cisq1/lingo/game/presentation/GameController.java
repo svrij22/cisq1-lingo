@@ -8,12 +8,14 @@ import nl.hu.cisq1.lingo.game.presentation.dto.GameDto;
 import nl.hu.cisq1.lingo.security.data.UserProfile;
 import nl.hu.cisq1.lingo.words.domain.Word;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.security.PermitAll;
 import java.util.ArrayList;
 
 @RestController
