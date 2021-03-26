@@ -2,9 +2,13 @@ package nl.hu.cisq1.lingo.security;
 
 import nl.hu.cisq1.lingo.security.presentation.filter.JwtAuthenticationFilter;
 import nl.hu.cisq1.lingo.security.presentation.filter.JwtAuthorizationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements ApplicationContextAware {
     public final static String LOGIN_PATH = "/login";
     public final static String REGISTER_PATH = "/register";
 
@@ -86,4 +90,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
+
 }

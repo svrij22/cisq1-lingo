@@ -1,33 +1,38 @@
 package nl.hu.cisq1.lingo.game.presentation;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import nl.hu.cisq1.lingo.CiTestConfiguration;
-import nl.hu.cisq1.lingo.SpringSecWebAuxTestConfig;
-import nl.hu.cisq1.lingo.game.application.GameService;
-import nl.hu.cisq1.lingo.game.domain.Game;
-import nl.hu.cisq1.lingo.words.domain.Word;
+import nl.hu.cisq1.lingo.SecurityConfig;
+import nl.hu.cisq1.lingo.game.data.GameRepository;
+import nl.hu.cisq1.lingo.security.application.UserService;
+import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
+import nl.hu.cisq1.lingo.words.data.SpringWordRepository;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.mock;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,32 +41,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(CiTestConfiguration.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class GameControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    SpringUserRepository userRepository;
 
-    public int getGameId() throws Exception {
-        final Integer[] gameId = new Integer[1];
+    String authToken;
 
-        RequestBuilder request = MockMvcRequestBuilders
-                .get("/game/new");
-
-        mockMvc.perform(request)
-                .andDo(mvcResult -> {
-                    String testStr = mvcResult.getResponse().getContentAsString().split("[:,]")[1];
-                    gameId[0] = Integer.valueOf(testStr);
-                });
-
-        return gameId[0];
+    @BeforeAll
+    public void setupUser() {
+        this.authToken = SecurityConfig.getAuthToken(userRepository);
     }
 
     @Test
-    @WithMockUser(username = "user1", password = "pwd123", roles = "USER")
     @DisplayName("Request a new game")
     void requestNewGame() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .get("/game");
+                .get("/game")
+                .header("Authorization", authToken);
 
         mockMvc.perform(request)
                 .andDo(print())
@@ -71,12 +71,10 @@ class GameControllerIntegrationTest {
 
     @Test
     @DisplayName("Try guess at existing game")
-    void testGuessExistingGame() throws Exception {
-        int gameId = getGameId();
-
+    void testGuessExistingGameExpectWordLengthError() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
                 .post("/game/guess")
-                .queryParam("id", String.valueOf(gameId))
+                .header("Authorization", authToken)
                 .queryParam("guess", "xxxxxxxx");
 
         mockMvc.perform(request)
@@ -91,12 +89,11 @@ class GameControllerIntegrationTest {
 
 
     @Test
-    @DisplayName("Do a guess on non-existant game")
+    @DisplayName("Reset game without finishing it")
     void notSupportedWordLength() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .post("/game/guess")
-                .queryParam("id", "-1")
-                .queryParam("guess", "xxxxx");
+                .get("/game/reset")
+                .header("Authorization", authToken);
 
         mockMvc.perform(request)
                 .andDo(print())
@@ -104,7 +101,7 @@ class GameControllerIntegrationTest {
                 .andExpect(mvcResult -> {
                     String errorMsg = mvcResult.getResponse().getErrorMessage();
                     assert errorMsg != null;
-                    assert errorMsg.contains("Game Id Not Found");
+                    assert errorMsg.contains("Game is still running");
                 });
     }
 
