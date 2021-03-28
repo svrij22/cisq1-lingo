@@ -1,7 +1,7 @@
 package nl.hu.cisq1.lingo.words.presentation;
 
 import nl.hu.cisq1.lingo.CiTestConfiguration;
-import nl.hu.cisq1.lingo.SecurityConfig;
+import nl.hu.cisq1.lingo.SecurityConfigHelper;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ class WordControllerIntegrationTest {
 
     @BeforeAll
     public void setupUser() {
-        this.authToken = SecurityConfig.getAuthToken(userRepository);
+        this.authToken = SecurityConfigHelper.getAuthToken(userRepository);
     }
 
     @Test

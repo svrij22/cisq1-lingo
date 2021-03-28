@@ -1,11 +1,10 @@
 package nl.hu.cisq1.lingo.game.presentation;
 
 import nl.hu.cisq1.lingo.CiTestConfiguration;
-import nl.hu.cisq1.lingo.SecurityConfig;
+import nl.hu.cisq1.lingo.SecurityConfigHelper;
 import nl.hu.cisq1.lingo.game.application.GameService;
 import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
-import org.hibernate.Hibernate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,7 +44,7 @@ class GameControllerIntegrationTest {
 
     @BeforeAll
     public void setupUser() {
-        this.authToken = SecurityConfig.getAuthToken(userRepository);
+        this.authToken = SecurityConfigHelper.getAuthToken(userRepository);
     }
 
     @Test

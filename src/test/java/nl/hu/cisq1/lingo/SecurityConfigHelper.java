@@ -13,12 +13,16 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 
-public class SecurityConfig {
+public class SecurityConfigHelper {
 
     public static String getAuthToken(SpringUserRepository userRepository) {
         UserService userService = new UserService(userRepository, mock(PasswordEncoder.class));
-        User user = userService.loadUserByUsername("user4");
-        userRepository.delete(user);
+
+        try{
+            User user = userService.loadUserByUsername("user4");
+            userRepository.delete(user);
+        }catch (Exception ignored){};
+
         userService.register("user4", "test123");
         return getToken();
     }

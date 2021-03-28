@@ -44,10 +44,7 @@ class RegistrationControllerTest {
     void testRegisterService(String username, String password) throws Exception {
 
         /*Make sure user doesn't exist*/
-        try{
-            User user = userService.loadUserByUsername(username);
-            userRepository.delete(user);
-        }catch (Exception ignored){}
+        removeUser(username);
 
         /*Create userdto*/
         Map<String,String> authdto = new HashMap<>();
@@ -71,11 +68,8 @@ class RegistrationControllerTest {
     void testRegisterServiceAlreadyExists(String username, String password) throws Exception {
 
         /*Make sure user exists*/
-        try{
-            User user = userService.loadUserByUsername(username);
-            userRepository.delete(user);
-            userService.register(username,password);
-        }catch (Exception ignored){}
+        removeUser(username);
+        registerUser(username, password);
 
         /*Create userdto*/
         Map<String,String> authdto = new HashMap<>();
@@ -88,6 +82,19 @@ class RegistrationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
+    }
+
+    public void removeUser(String username){
+        try{
+            User user = userService.loadUserByUsername(username);
+            userRepository.delete(user);
+        }catch (Exception ignored){}
+    }
+
+    public void registerUser(String username, String password){
+        try{
+            userService.register(username,password);
+        }catch (Exception ignored){}
     }
 
 
