@@ -33,10 +33,6 @@ public class UserService implements UserDetailsService {
         this.userRepository.save(user);
     }
 
-    public boolean login(String username, String password){
-        User user = loadUserByUsername(username);
-        return user.getPassword().equals(this.passwordEncoder.encode(password));
-    }
     @Override
     public User loadUserByUsername(String username) {
         return this.userRepository.findByUsername(username)

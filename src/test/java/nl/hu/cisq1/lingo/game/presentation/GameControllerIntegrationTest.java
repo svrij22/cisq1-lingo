@@ -78,6 +78,22 @@ class GameControllerIntegrationTest {
                 });
     }
 
+    @Test
+    @Transactional
+    @DisplayName("Try right guess")
+    void testRightGuess() throws Exception {
+        String word = gameService.getGameForUser("user4").getCurrentRound().getWordToGuess().getValue();
+
+        RequestBuilder request = MockMvcRequestBuilders
+                .post("/game/guess")
+                .header("Authorization", authToken)
+                .queryParam("guess", word);
+
+        mockMvc.perform(request)
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful());
+    }
+
 
     @Test
     @DisplayName("Reset game without finishing it")
