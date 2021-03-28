@@ -97,7 +97,6 @@ class RegistrationControllerTest {
         }catch (Exception ignored){}
     }
 
-
     static Stream<Arguments> randomUsers() {
         return Stream.of(
                 Arguments.of("user1", "pwd55"),

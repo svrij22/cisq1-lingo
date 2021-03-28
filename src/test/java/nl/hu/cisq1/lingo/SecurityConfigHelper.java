@@ -48,4 +48,5 @@ public class SecurityConfigHelper {
                 .claim("rol", roles)
                 .compact();
     }
+
 }
