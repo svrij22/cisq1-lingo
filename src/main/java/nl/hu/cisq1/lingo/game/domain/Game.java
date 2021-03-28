@@ -22,7 +22,7 @@ public class Game implements Serializable {
     private Double score = (double) 0;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Round> rounds = new ArrayList<Round>(){};
+    private List<Round> rounds = new ArrayList<>();
 
     public Game() {}
     public Game(Word word) {

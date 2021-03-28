@@ -57,7 +57,7 @@ public class GameService {
         return resetGame(word, username);
     }
 
-    public Game resetGame(Word word, String username) throws Exception {
+    public Game resetGame(Word word, String username) {
         Game game = getGameForUser(username);
         game.resetGame(word);
         gameRepository.save(game);

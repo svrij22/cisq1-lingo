@@ -3,7 +3,9 @@ package nl.hu.cisq1.lingo.game.presentation;
 import nl.hu.cisq1.lingo.CiTestConfiguration;
 import nl.hu.cisq1.lingo.SecurityConfig;
 import nl.hu.cisq1.lingo.game.application.GameService;
+import nl.hu.cisq1.lingo.game.domain.Game;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,8 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.transaction.Transactional;
 import java.util.stream.IntStream;
 
+import static nl.hu.cisq1.lingo.game.domain.enums.GameState.STARTED;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.mock;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -95,6 +99,7 @@ class GameControllerIntegrationTest {
 
     @Test
     @DisplayName("Reset game after failing")
+    @Transactional
     void notSupportedWordLength() throws Exception {
 
         /*Do guesses*/
@@ -113,6 +118,13 @@ class GameControllerIntegrationTest {
         mockMvc.perform(request)
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
+
+        /*Check if game is reset*/
+        /*Transactional required*/
+
+        Game game = gameService.getGameForUser("user4");
+        assert !game.getCurrentRound().isCorrect();
+        assert game.getState() == STARTED;
     }
 
 }
