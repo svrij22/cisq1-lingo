@@ -23,10 +23,10 @@ jobs:
     - name: Build the stack
       run: docker-compose up --build -V -d
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - name: Setup Java JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+         java-version: 11
     - name: Run tests and build with Maven
       run: |
         mvn test
