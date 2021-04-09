@@ -19,7 +19,11 @@ Zorg ervoor dat server.port op 8070 staat in application properties
 > Line Coverage  \
 >16 of 1,259	98%\
 > Branch Coverage  \
->	1 of 38	97% 
+>	1 of 38	97%
+
+## SonarCloud.io
+> https://sonarcloud.io/dashboard?id=svrij22_cisq1-lingo
+> 89.7% Coverage
 
 #Extra's
 > Front-end \
