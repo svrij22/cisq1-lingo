@@ -64,6 +64,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
                 .antMatchers(HttpMethod.POST, LOGIN_PATH).permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/**").permitAll()
+
+                /*Frontend*/
+                .antMatchers("/").permitAll()
+                .antMatchers("/image/**").permitAll()
+                .antMatchers("/js/**", "/css/**", "/img/**","/#/**").permitAll()
+
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(

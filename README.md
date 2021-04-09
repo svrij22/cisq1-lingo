@@ -3,11 +3,11 @@
 Test
 test
 
-## Front - end draaien
+## Vue Front-end draaien (Optioneel)
 stap 1. ga naar "./src/vueapp" \
 stap 2. doe "npm run serve"
 
-## Back - end draaien
+## Spring Boot draaien
 Zorg ervoor dat server.port op 8070 staat in application properties
 
 ## PIT
