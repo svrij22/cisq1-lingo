@@ -15,14 +15,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static nl.hu.cisq1.lingo.game.domain.enums.LetterState.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class HintTest {
 
     @Test
     @DisplayName("Checks hint")
-    void createsArray() {
+    void checkHintFalse() {
+        Round round = new Round(new Word("woord"));
+        round.doGuess("wooxx");
+        round.doGuess("xxxxx");
+        round.doGuess("xxxxx");
+
+        Hint hint = round.getHint();
+        assertNotEquals(hint.hint, Arrays.asList('w', 'o', '_', '_', '_'));
+        assertNotEquals(hint.hintStr(), "wo___");
+    }
+
+    @Test
+    @DisplayName("Checks hint")
+    void checkHint() {
         Round round = new Round(new Word("woord"));
         round.doGuess("woxxx");
         round.doGuess("xxxxx");

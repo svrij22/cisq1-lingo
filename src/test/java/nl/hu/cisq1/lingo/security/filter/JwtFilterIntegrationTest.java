@@ -6,6 +6,7 @@ import nl.hu.cisq1.lingo.security.filter.UserService;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
 import nl.hu.cisq1.lingo.security.data.User;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,7 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,6 +59,7 @@ class JwtFilterIntegrationTest {
         /*Perform post with form data*/
         mockMvc.perform(post("/login")
                 .content(mapper.writeValueAsString(authdto))
+                .with(request->{request.setRemoteAddr("192.168.0.1");return request;}) /*Required as not to get blocked*/
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> {
@@ -62,6 +67,69 @@ class JwtFilterIntegrationTest {
                     System.out.println(header);
                     assert header != null && header.contains("Bearer");
                 });
+    }
+
+    @Test
+    @DisplayName("Wrong password")
+    void testUserWrongPassword() throws Exception {
+
+        /*Make sure user exists*/
+        removeUser("testuser");
+        registerUser("testuser", "testpassword1");
+
+        /*Create userdto*/
+        Map<String,String> authdto = new HashMap<>();
+
+        authdto.put("username", "testuser");
+        authdto.put("password", "wrongpass");
+
+        /*Perform post with form data*/
+        mockMvc.perform(post("/login")
+                .content(mapper.writeValueAsString(authdto))
+                .with(request->{request.setRemoteAddr("192.168.0.2");return request;})
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("User gets blocked")
+    void testUserGetsBlocked() throws Exception {
+
+        /*Make sure user exists*/
+        removeUser("testuser");
+        registerUser("testuser", "testpassword1");
+
+        /*Create userdto*/
+        Map<String,String> authdto = new HashMap<>();
+        authdto.put("username", "testuser");
+        authdto.put("password", "wrongpass");
+
+        /*10 wrong attempts*/
+        IntStream.range(0, 10).forEach((n) -> {
+            System.out.println("Attempt " + n);
+
+            try {
+                mockMvc.perform(post("/login")
+                        .content(mapper.writeValueAsString(authdto))
+                        .with(request->{request.setRemoteAddr("192.168.0.3");return request;})
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().is4xxClientError());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        //right passw
+        authdto.put("password", "testpassword1");
+
+        /*Perform post with form data*/
+        assertThrows(RuntimeException.class, () -> {
+            mockMvc.perform(post("/login")
+                    .content(mapper.writeValueAsString(authdto))
+                    .with(request->{request.setRemoteAddr("192.168.0.3");return request;})
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().is4xxClientError());
+        });
     }
 
     public void removeUser(String username){

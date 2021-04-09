@@ -7,7 +7,7 @@ public class AuthDto {
     @NotBlank
     public String username;
 
-    @Size(min = 8)
+    @Size(min = 10)
     public String password;
 
 }

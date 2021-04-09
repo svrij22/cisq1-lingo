@@ -60,7 +60,7 @@
 
                 if (!this.isLoginForm){
                     try{
-                        if (this.form.password.length < 5){
+                        if (this.form.password.length < 10){
                             this.errorMsg = "Password not long enough"
                             return false;
                         }

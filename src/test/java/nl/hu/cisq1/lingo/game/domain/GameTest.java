@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,11 +37,7 @@ class GameTest {
         assertTrue(game.getCurrentRound().getGuesses().get(0).isCorrect());
         assertEquals(game.getState(), GameState.WON);
 
-        try{
-            game.resetGame(word);
-        }catch (Exception e){
-            fail("Exception thrown");
-        }
+        assertDoesNotThrow(() -> game.resetGame(word));
     }
 
     @ParameterizedTest
@@ -62,30 +59,26 @@ class GameTest {
     @DisplayName("Creates a new game and guesses the wrong word length")
     @MethodSource("randomWordExamples")
     void testGameWrongLength(Word word) {
-        try {
-            Game game = new Game(word);
+        Game game = new Game(word);
+
+        assertThrows(WordLengthNotEqual.class, () -> {
             game.doGuess(word.getValue() + "xxx");
-            assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
-            assertEquals(game.getState(), GameState.STARTED);
-            fail( "My method didn't throw when I expected it to" );
-        } catch (WordLengthNotEqual ignored) {} catch (Exception e) {
-            fail( "Failed on wrong exception" );
-        }
+        });
+
+        assertEquals(game.getState(), GameState.STARTED);
     }
 
     @ParameterizedTest
     @DisplayName("Creates a new game and fails the round")
     @MethodSource("randomWordExamples")
     void testGameFailRound(Word word) {
-        try {
-            Game game = new Game(word);
-            game.doGuess(word.getValue() + "xxx");
-            assertFalse(game.getCurrentRound().getGuesses().get(0).isCorrect());
-            assertEquals(game.getState(), GameState.STARTED);
-            fail( "My method didn't throw when I expected it to" );
-        } catch (WordLengthNotEqual ignored) {} catch (Exception e) {
-            fail( "Failed on wrong exception" );
-        }
+        Game game = new Game(word);
+
+        IntStream.range(0, 10).forEach((n) -> {
+            game.doGuess(word.getValue().replace('a', 'b'));
+        });
+
+        assertEquals(game.getState(), GameState.GAMEOVER);
     }
 
     static Stream<Arguments> randomWordExamples() {

@@ -10,6 +10,7 @@ import 'vue-material/dist/theme/default.css'
 
 import AuthComp from "./components/AuthComp";
 import LingoComp from "./components/LingoComp";
+import LeaderBoardComp from "./components/LeaderBoardComp";
 
 Vue.use(VueMaterial)
 Vue.use(VueRouter)
@@ -17,7 +18,8 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', component: AuthComp },
   { path: '/game', component: LingoComp },
-  { path: '/auth', component: AuthComp }
+  { path: '/auth', component: AuthComp },
+  { path: '/leaderboard', component: LeaderBoardComp },
 ]
 const router = new VueRouter({
   routes

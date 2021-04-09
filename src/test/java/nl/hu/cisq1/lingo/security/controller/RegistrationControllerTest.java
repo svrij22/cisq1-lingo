@@ -6,6 +6,7 @@ import nl.hu.cisq1.lingo.security.filter.UserService;
 import nl.hu.cisq1.lingo.security.data.SpringUserRepository;
 import nl.hu.cisq1.lingo.security.data.User;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +26,8 @@ import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Import(CiTestConfiguration.class)
@@ -60,6 +64,29 @@ class RegistrationControllerTest {
         User user = userService.loadUserByUsername(username);
         assert user!=null;
 
+    }
+
+    @Test
+    @DisplayName("Password is too short")
+    void testRegisterPwdTooShort() throws Exception {
+
+        /*Make sure user doesn't exist*/
+        removeUser("tooshort");
+
+        /*Create userdto*/
+        Map<String,String> authdto = new HashMap<>();
+        authdto.put("username", "tooshort");
+        authdto.put("password", "passw");
+
+        /*Perform post with form data*/
+        mockMvc.perform(post("/register")
+                .content(mapper.writeValueAsString(authdto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        assertThrows(UsernameNotFoundException.class, ()->{
+            userService.loadUserByUsername("tooshort");
+        });
     }
 
     @ParameterizedTest
@@ -99,11 +126,11 @@ class RegistrationControllerTest {
 
     static Stream<Arguments> randomUsers() {
         return Stream.of(
-                Arguments.of("user1", "pwd55"),
-                Arguments.of("user2", "pwd55"),
-                Arguments.of("user3", "pwd55"),
-                Arguments.of("user4", "pwd55"),
-                Arguments.of("user5", "pwd55")
+                Arguments.of("user1", "pwd55pwd55"),
+                Arguments.of("user2", "pwd55pwd55"),
+                Arguments.of("user3", "pwd55pwd55"),
+                Arguments.of("user4", "pwd55pwd55"),
+                Arguments.of("user5", "pwd55pwd55")
         );
     }
 }

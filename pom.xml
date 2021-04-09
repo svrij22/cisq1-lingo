@@ -166,6 +166,14 @@
                         <version>0.12</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <mutationThreshold>75</mutationThreshold>
+                    <excludedClasses>
+                        <param>**LingoApplication**</param>
+                        <param>**UserProfile**</param>
+                        <param>**SecurityConfig**</param>
+                    </excludedClasses>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

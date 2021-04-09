@@ -21,7 +21,7 @@
                     <span class="md-list-item-text">Game</span>
                 </md-list-item>
 
-                <md-list-item>
+                <md-list-item @click="$router.push('/leaderboard')">
                     <md-icon>send</md-icon>
                     <span class="md-list-item-text">Leaderboard</span>
                 </md-list-item>

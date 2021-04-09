@@ -46,8 +46,4 @@ public class LoginAttemptService {
             return false;
         }
     }
-
-    public Map<String, Integer> getAttemptsCache() {
-        return attemptsCache;
-    }
 }

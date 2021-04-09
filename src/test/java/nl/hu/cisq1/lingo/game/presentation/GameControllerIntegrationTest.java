@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 
 import static nl.hu.cisq1.lingo.game.domain.enums.GameState.STARTED;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -91,7 +92,10 @@ class GameControllerIntegrationTest {
 
         mockMvc.perform(request)
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is2xxSuccessful())
+                .andDo(mvcResult -> {
+                    assertTrue(mvcResult.getResponse().getContentAsString().contains(word));
+                });
     }
 
 
@@ -119,8 +123,6 @@ class GameControllerIntegrationTest {
 
         /*Do guesses*/
         IntStream.range(0, 10).forEach(i -> {
-
-            /*TODO please remove this. Really ugly*/
             try{ gameService.gameDoGuess("user4", "xxxxx"); }catch (Exception ignored){}
             try{ gameService.gameDoGuess("user4", "xxxxxx"); }catch (Exception ignored){}
             try{ gameService.gameDoGuess("user4", "xxxxxxx"); }catch (Exception ignored){}

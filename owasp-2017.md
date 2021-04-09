@@ -29,7 +29,7 @@ Risicofactoren zijn Single-Factor Authentication, zwakke wachtwoorden en voor ee
 ### Counter-measures
 Om dit soort aanvallen tegen te gaan maken we gebruik van een LoginAttemptService.
 Deze service houdt per IP adres bij hoeveel inlogpogingen er zijn gedaan. Na 24 uur reset het aantal inlogpogingen en kan een gebruiker weer proberen in te loggen. 
-
+Om brute-force attacks moeilijker te maken moeten daarnaast wachtwoorden tenminste 10 characters lang zijn.
 ## A1:2017 Injection
 
 ### Broken Access Control

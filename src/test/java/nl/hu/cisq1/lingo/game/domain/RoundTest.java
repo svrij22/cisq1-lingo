@@ -58,10 +58,7 @@ class RoundTest {
         assertFalse(round.isCorrect());
         assertTrue(round.isGameOver());
 
-        try{
-            round.doGuess("xxxxx");
-            fail("No exception thrown");
-        }catch (Exception ignored){}
+        assertThrows(Exception.class, ()-> round.doGuess("xxxxx"));
     }
 
     static Stream<Arguments> randomWordExamples() {

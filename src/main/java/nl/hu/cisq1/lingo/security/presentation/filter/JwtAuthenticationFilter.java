@@ -75,20 +75,16 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         Authentication authentication;
         try{
             authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.username, login.password));
+            loginAttemptService.loginSucceeded(ip);
         }catch (Exception e){
             loginAttemptService.loginFailed(ip);
-            System.out.println(loginAttemptService.getAttemptsCache());
             throw e;
         }
         return authentication;
     }
 
     private String getClientIP(HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null){
-            return request.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
+        return request.getRemoteAddr();
     }
 
     @Override
