@@ -20,3 +20,7 @@ Zorg ervoor dat server.port op 8070 staat in application properties
 >16 of 1,259	98%\
 > Branch Coverage  \
 >	1 of 38	97% 
+
+#Extra's
+> Front-end \
+> Leaderboard
