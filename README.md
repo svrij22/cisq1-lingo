@@ -23,4 +23,7 @@ Zorg ervoor dat server.port op 8070 staat in application properties
 
 #Extra's
 > Front-end \
-> Leaderboard
+> Leaderboard \
+> Authorization en Authentication \
+> Authorization en Authentication Tests \
+> Login Attempt Service
