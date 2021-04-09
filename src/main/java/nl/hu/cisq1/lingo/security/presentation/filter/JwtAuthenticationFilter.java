@@ -5,7 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import nl.hu.cisq1.lingo.security.data.User;
+import nl.hu.cisq1.lingo.security.filter.LoginAttemptService;
 import nl.hu.cisq1.lingo.security.presentation.dto.AuthDto;
+import org.apache.juli.logging.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,29 +42,53 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     private final Integer expirationInMs;
 
     private final AuthenticationManager authenticationManager;
+    private LoginAttemptService loginAttemptService;
 
     public JwtAuthenticationFilter(
             String path,
             String secret,
             Integer expirationInMs,
-            AuthenticationManager authenticationManager
-    ) {
+            AuthenticationManager authenticationManager,
+            LoginAttemptService loginAttemptService) {
         super(new AntPathRequestMatcher(path));
 
         this.secret = secret;
         this.expirationInMs = expirationInMs;
         this.authenticationManager = authenticationManager;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-        throws AuthenticationException, IOException, ServletException {
+        throws IOException, RuntimeException {
+
+        String ip = getClientIP(request);
+
+        if (loginAttemptService.isBlocked(ip)) {
+            response.setStatus(406);
+            throw new RuntimeException("blocked");
+        }
+
         AuthDto login = new ObjectMapper()
                 .readValue(request.getInputStream(), AuthDto.class);
 
-        return authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(login.username, login.password)
-        );
+        Authentication authentication;
+        try{
+            authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.username, login.password));
+        }catch (Exception e){
+            loginAttemptService.loginFailed(ip);
+            System.out.println(loginAttemptService.getAttemptsCache());
+            throw e;
+        }
+        return authentication;
+    }
+
+    private String getClientIP(HttpServletRequest request) {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null){
+            return request.getRemoteAddr();
+        }
+        return xfHeader.split(",")[0];
     }
 
     @Override

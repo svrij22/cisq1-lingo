@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class FilterTest {
+class JwtFilterIntegrationTest {
 
     @Autowired UserService userService;
     @Autowired SpringUserRepository userRepository;

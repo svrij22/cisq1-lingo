@@ -1,5 +1,6 @@
 package nl.hu.cisq1.lingo.security;
 
+import nl.hu.cisq1.lingo.security.filter.LoginAttemptService;
 import nl.hu.cisq1.lingo.security.presentation.filter.JwtAuthenticationFilter;
 import nl.hu.cisq1.lingo.security.presentation.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
     @Value("${security.jwt.expiration-in-ms}")
     private Integer jwtExpirationInMs;
 
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and()
@@ -63,18 +67,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(
-                                LOGIN_PATH,
-                                this.jwtSecret,
-                                this.jwtExpirationInMs,
-                                this.authenticationManager()
-                        ),
+                        jwtAuthenticationFilter(),
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .addFilter(new JwtAuthorizationFilter(this.jwtSecret, this.authenticationManager()))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+    }
+
+    private JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter(
+                LOGIN_PATH,
+                this.jwtSecret,
+                this.jwtExpirationInMs,
+                this.authenticationManager(),
+                loginAttemptService
+        );
     }
 
     @Bean
