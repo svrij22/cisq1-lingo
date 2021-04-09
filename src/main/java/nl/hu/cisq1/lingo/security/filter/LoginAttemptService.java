@@ -21,7 +21,7 @@ public class LoginAttemptService {
             public void run() {
                 attemptsCache = new HashMap<>();
             }
-        }, 24*60*60*1000);
+        }, 24*60*60*1000, 24*60*60*1000);
     }
 
     public void loginSucceeded(String key) {

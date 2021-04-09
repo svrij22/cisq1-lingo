@@ -26,4 +26,5 @@ Zorg ervoor dat server.port op 8070 staat in application properties
 > Leaderboard \
 > Authorization en Authentication \
 > Authorization en Authentication Tests \
-> Login Attempt Service
+> Login Attempt Service \
+> (24 * 60 * 60 * (1000 milliseconds) = 1 day)
